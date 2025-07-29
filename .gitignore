@@ -1,0 +1,18 @@
+# Ignore node_modules and build folders
+node_modules/
+dist/
+build/
+.env
+
+# Mac / Windows specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Typescript cache
+*.tsbuildinfo
