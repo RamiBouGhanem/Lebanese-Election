@@ -1,10 +1,10 @@
 import { Controller, Post, Get, Body, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard'; // ✅ Import the guard
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Post('signup')
   async signup(@Body() body: { username: string; password: string; role: string }) {
@@ -13,17 +13,14 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() body: { username: string; password: string }) {
-    const user = await this.authService.validateUser(
-      body.username,
-      body.password,
-    );
+    const user = await this.authService.validateUser(body.username, body.password);
     return this.authService.login(user);
   }
 
-  // ✅ New verify endpoint
   @Get('verify')
   @UseGuards(JwtAuthGuard)
   verify(@Request() req) {
-    return { user: req.user }; // returns the user info from the token
+    // user injected by JwtStrategy.validate()
+    return { user: req.user };
   }
 }

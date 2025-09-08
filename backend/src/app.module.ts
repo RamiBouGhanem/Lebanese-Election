@@ -1,25 +1,36 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
 import { CandidatesModule } from './candidates/candidates.module';
-import { DashboardController } from './dashboard/dashboard.controller';
+import { AuthModule } from './auth/auth.module';
+import { RepresentativeModule } from './representative/representative.module';
+import { IncidentsModule } from './incidents/incidents.module';
+
+// OPTIONAL: make guards global if you already have them implemented
+// import { APP_GUARD } from '@nestjs/core';
+// import { JwtAuthGuard } from './auth/jwt-auth.guard';
+// import { RolesGuard } from './auth/roles.guard';
 
 @Module({
   imports: [
-    // Load environment variables
-    ConfigModule.forRoot({
-      isGlobal: true, // Makes .env available everywhere
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/senior-project'),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
-    // MongoDB Connection
-    MongooseModule.forRoot(process.env.MONGO_URI || ''),
 
-    // Feature modules
-    AuthModule,
-    UsersModule,
     CandidatesModule,
+    AuthModule,
+    RepresentativeModule,
+    IncidentsModule, // 👈 important
   ],
-  controllers: [DashboardController], // Register the dashboard routes
+  // providers: [
+  //   { provide: APP_GUARD, useClass: JwtAuthGuard },
+  //   { provide: APP_GUARD, useClass: RolesGuard },
+  // ],
 })
 export class AppModule {}
